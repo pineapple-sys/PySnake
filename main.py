@@ -33,7 +33,6 @@ def update(snake):
 direction = None
 running = True
 timer = 0
-x =0
 while running:
     dt = clock.tick(60)/1000
     for event in pygame.event.get():
@@ -49,14 +48,10 @@ while running:
             if event.key == pygame.K_DOWN:
                 direction = 'D'
     timer += dt
-    if direction != None and timer >=0.3 and x ==0:
-        x =1
+    if direction != None and timer >=0.3:
         timer=0
         update(snake)
         turn(direction)
-        for i in snake:
-            print(i.pos)
-        
     screen.fill((0,0,0))
     for piece in snake:
         piece.draw(screen)

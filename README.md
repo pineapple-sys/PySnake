@@ -1,3 +1,3 @@
 # PySnake
 
-- I'm adding this from main
+-Snake in python, using Pygame library.
