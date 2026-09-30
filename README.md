@@ -1,3 +1,3 @@
 # PySnake
 
--Snake in python, using Pygame library.
+- Snake in python, using Pygame library.
