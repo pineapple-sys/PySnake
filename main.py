@@ -1,19 +1,40 @@
-import pygame, time
+import pygame, time, random
 WIDTH,HEIGHT = 800,600
 screen = pygame.display.set_mode((WIDTH,HEIGHT))
 snake = [0]*3
+apples = [0]*1
 clock = pygame.time.Clock()
 #snake body and head
 class obj:
-    def __init__(self, pos,vel):
+    def __init__(self, pos,vel,rgb):
         self.pos = pygame.Vector2(pos[0],pos[1])
         self.vel = vel
+        self.rgb = rgb
     def draw(self, screen):
-        pygame.draw.rect(screen,(0,255,0),(self.pos[0],self.pos[1],20,20))
+        pygame.draw.rect(screen,self.rgb,(self.pos[0],self.pos[1],20,20))
 
 for i in range(3):
-    snake[i] = obj((WIDTH//2-i*20,HEIGHT//2),20)
+    snake[i] = obj((WIDTH//2-i*20,HEIGHT//2),20,(0,255,0))
 
+
+#apple
+def apple(snake):
+    a_pos = None
+    while a_pos == None:
+        w = random.randrange(0,WIDTH-20,20)
+        h = random.randrange(0,HEIGHT-20,20)
+        for i in snake:
+            if (w +20 >= i.pos[0] and
+            w <= i.pos[0]+20 and
+            h +20 >= i.pos[1] and
+            h <= i.pos[1]+20):
+                a_pos = None
+                break
+            else:
+                a_pos = (w,h)
+                return(a_pos)
+for i in range(1):
+    apples[i]= obj(apple(snake),20,(255,0,0))
 #Snake's head direction
 def turn(d):
     if d =="U":
@@ -48,12 +69,17 @@ while running:
             if event.key == pygame.K_DOWN:
                 direction = 'D'
     timer += dt
-    if direction != None and timer >=0.3:
+    if direction != None and timer >=0.2:
         timer=0
         update(snake)
         turn(direction)
+    if not apples:
+        for i in range(1):
+            apples[i]= obj(apple(snake),20)
     screen.fill((0,0,0))
     for piece in snake:
         piece.draw(screen)
+    for a in apples:
+        a.draw(screen)
     pygame.display.flip()
 pygame.quit()
