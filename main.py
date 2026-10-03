@@ -12,12 +12,18 @@ class obj:
         self.rgb = rgb
     def draw(self, screen):
         pygame.draw.rect(screen,self.rgb,(self.pos[0],self.pos[1],20,20))
-
+    def collide(self, apples):
+        for a in apples[:]:
+            if (a.pos[0] +20 > self.pos[0] and
+            a.pos[0] < self.pos[0]+20 and
+            a.pos[1] +20 > self.pos[1] and
+            a.pos[1] < self.pos[1]+20):
+                apples.remove(a)
 for i in range(3):
     snake[i] = obj((WIDTH//2-i*20,HEIGHT//2),20,(0,255,0))
 
 
-#apple
+#spawn apple 
 def apple(snake):
     a_pos = None
     while a_pos == None:
@@ -36,8 +42,9 @@ def apple(snake):
 for i in range(1):
     apples[i]= obj(apple(snake),20,(255,0,0))
 #Snake's head direction
+
 def turn(d):
-    if d =="U":
+    if d =="U" :
         snake[0].pos[1] -= snake[0].vel
     elif d =="D":
         snake[0].pos[1] += snake[0].vel
@@ -46,6 +53,7 @@ def turn(d):
     else:
         snake[0].pos[0] -= snake[0].vel 
     
+
 #update snake body
 def update(snake):
     for i in range(len(snake)-1,0,-1):
@@ -54,6 +62,7 @@ def update(snake):
 direction = None
 running = True
 timer = 0
+
 while running:
     dt = clock.tick(60)/1000
     for event in pygame.event.get():
@@ -69,17 +78,23 @@ while running:
             if event.key == pygame.K_DOWN:
                 direction = 'D'
     timer += dt
-    if direction != None and timer >=0.2:
+    if direction != None and timer >=0.1:
         timer=0
         update(snake)
         turn(direction)
+                
+        for i in snake:
+            i.collide(apples)
     if not apples:
+        snake.append(obj((snake[len(snake)-1].pos),20,(0,255,0)))
         for i in range(1):
-            apples[i]= obj(apple(snake),20)
+            apples.append(obj(apple(snake),20,(255,0,0)))
     screen.fill((0,0,0))
-    for piece in snake:
-        piece.draw(screen)
+    snake[0].pos[0] = max(0, min(snake[0].pos[0], WIDTH-20))
+    snake[0].rgb = (0,0,255)
     for a in apples:
         a.draw(screen)
+    for piece in snake:
+        piece.draw(screen)    
     pygame.display.flip()
 pygame.quit()
