@@ -1,9 +1,18 @@
-import pygame, time, random
+import pygame, time, random, sys
+pygame.init()
+pygame.font.init()
 WIDTH,HEIGHT = 800,600
 screen = pygame.display.set_mode((WIDTH,HEIGHT))
 snake = [0]*3
 apples = [0]*1
+
+#End message
 clock = pygame.time.Clock()
+end_screen = pygame.font.Font(None,50)
+end_surface = end_screen.render("Game Over!",False,(255,255,255))
+end_surface_center = end_surface.get_rect()
+end_surface_center.center = (WIDTH//2,HEIGHT//2)
+
 #snake body and head
 class obj:
     def __init__(self, pos,vel,rgb):
@@ -58,6 +67,23 @@ def turn(d):
 def update(snake):
     for i in range(len(snake)-1,0,-1):
         snake[i].pos = pygame.Vector2(snake[i-1].pos[0],snake[i-1].pos[1])
+
+def border(snake):
+    w = snake[0].pos[0]
+    h = snake[0].pos[1]
+    if w<0 or WIDTH<w+20 or h<0 or HEIGHT<h+20:
+        return True
+def overlap(snake):
+    base = snake[0]
+    for a in snake:
+        if a is not snake[0]:
+            if (a.pos[0] +20 > base.pos[0] and
+            a.pos[0] < base.pos[0]+20 and
+            a.pos[1] +20 > base.pos[1] and
+            a.pos[1] < base.pos[1]+20):
+                return True
+
+
 #Game
 direction = None
 running = True
@@ -82,13 +108,19 @@ while running:
         timer=0
         update(snake)
         turn(direction)
-                
+        if border(snake):
+            print('Game Over!')
+            running = False
+        if overlap(snake):
+            print('Game Over!')
+            running = False
         for i in snake:
             i.collide(apples)
     if not apples:
         snake.append(obj((snake[len(snake)-1].pos),20,(0,255,0)))
         for i in range(1):
             apples.append(obj(apple(snake),20,(255,0,0)))
+    
     screen.fill((0,0,0))
     snake[0].pos[0] = max(0, min(snake[0].pos[0], WIDTH-20))
     snake[0].rgb = (0,0,255)
@@ -96,5 +128,10 @@ while running:
         a.draw(screen)
     for piece in snake:
         piece.draw(screen)    
+    if not running:
+        screen.blit(end_surface,end_surface_center)
     pygame.display.flip()
+
+time.sleep(2.5)
 pygame.quit()
+sys.exit()
