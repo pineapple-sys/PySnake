@@ -1,7 +1,7 @@
 import pygame, time, random, sys
 pygame.init()
 pygame.font.init()
-WIDTH,HEIGHT = 800,600
+WIDTH,HEIGHT = 400,400
 screen = pygame.display.set_mode((WIDTH,HEIGHT))
 snake = [0]*3
 apples = [0]*1
@@ -95,16 +95,16 @@ while running:
         if event.type == pygame.QUIT:
             running = False
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_RIGHT:
+            if event.key == pygame.K_RIGHT and direction!='L':
                 direction = 'R'
-            if event.key == pygame.K_LEFT:
+            if event.key == pygame.K_LEFT and direction!='R':
                 direction = 'L'
-            if event.key == pygame.K_UP:
+            if event.key == pygame.K_UP and direction!='D':
                 direction = 'U'
-            if event.key == pygame.K_DOWN:
+            if event.key == pygame.K_DOWN and direction!='U':
                 direction = 'D'
     timer += dt
-    if direction != None and timer >=0.1:
+    if direction != None and timer >=0.15:
         timer=0
         update(snake)
         turn(direction)
